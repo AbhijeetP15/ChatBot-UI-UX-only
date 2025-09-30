@@ -1,20 +1,41 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, Mic, Paperclip, Image as ImageIcon, Settings, Sun, Moon, Loader2, CheckCheck, Check, Trash2, Sparkles, Bot, User, ChevronLeft, ChevronRight, Smile, Keyboard, MoreHorizontal, MessageSquare, Search, Filter, Clock, Shield, Bell, Globe, Accessibility, Zap } from "lucide-react";
+import {
+  Send,
+  Mic,
+  Paperclip,
+  Image as ImageIcon,
+  Settings,
+  Sun,
+  Moon,
+  Loader2,
+  CheckCheck,
+  Check,
+  Trash2,
+  Sparkles,
+  Bot,
+  User,
+  ChevronLeft,
+  Smile,
+  Keyboard,
+  MoreHorizontal,
+  MessageSquare,
+  Search,
+  Filter,
+  Clock,
+  Shield,
+  Bell,
+  Globe,
+  Accessibility,
+  Zap,
+} from "lucide-react";
 
 /**
- * Chat UI/UX Showcase – Single‑file React component
- *
- * Highlights:
- * - Polished layout (sidebar + chat pane + utility header)
- * - Light/Dark themes with smooth transitions
- * - Accessibility: ARIA roles, labels, focus rings, skip link
- * - Micro‑interactions: hover, press, typing bubble, message send
- * - Empty/error/success states
- * - Message status (sent/delivered/read)
- * - Quick actions, attachments, emoji, command palette hint
- * - Responsive and keyboard friendly
- * - No external CSS required (Tailwind classes)
+ * Chat UI/UX Showcase – Single-file React component
+ * - Responsive layout, dark/light themes, micro-interactions
+ * - Accessibility: ARIA roles/labels, focus rings, skip link
+ * - Message status ticks, typing indicator, attachments, slash commands
+ * - No network calls; perfect for portfolio demos
  */
 
 // Utility: fake delay
@@ -22,7 +43,6 @@ const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 // Types
 type Sender = "user" | "bot";
-
 type MsgStatus = "sending" | "sent" | "delivered" | "read";
 
 interface Message {
@@ -52,7 +72,7 @@ const demoThreads: Thread[] = [
 
 const introMessages: Message[] = [
   { id: "m1", sender: "bot", text: "Hey! I’m the demo assistant. Ask me anything about this UI.", time: "09:58" },
-  { id: "m2", sender: "user", text: "Show me your best micro‑interactions.", time: "10:01", status: "read" },
+  { id: "m2", sender: "user", text: "Show me your best micro-interactions.", time: "10:01", status: "read" as const },
   { id: "m3", sender: "bot", text: "You’ll see motion, affordances, and accessible controls throughout.", time: "10:02" },
 ];
 
@@ -85,7 +105,9 @@ function Bubble({ m }: { m: Message }) {
                 className="px-2 py-1 rounded-xl border border-zinc-200 dark:border-zinc-700 text-xs flex items-center gap-2"
               >
                 {a.type === "image" ? <ImageIcon className="size-3.5" /> : <Paperclip className="size-3.5" />}
-                <span className="truncate max-w-40" title={a.name}>{a.name}</span>
+                <span className="truncate max-w-40" title={a.name}>
+                  {a.name}
+                </span>
               </div>
             ))}
           </div>
@@ -105,7 +127,6 @@ function Bubble({ m }: { m: Message }) {
           {m.text}
           {mine && (
             <div className="absolute -bottom-5 right-0 flex items-center gap-1 text-xs text-zinc-500">
-              {/* Status ticks */}
               {m.status === "sending" && <Loader2 className="size-3 animate-spin" aria-label="Sending" />}
               {m.status === "sent" && <Check className="size-3" aria-label="Sent" />}
               {m.status === "delivered" && <CheckCheck className="size-3" aria-label="Delivered" />}
@@ -136,7 +157,15 @@ const Typing = () => (
 );
 
 // Header button
-function IconBtn({ label, children, onClick }: { label: string; children: React.ReactNode; onClick?: () => void }) {
+function IconBtn({
+  label,
+  children,
+  onClick,
+}: {
+  label: string;
+  children: React.ReactNode;
+  onClick?: () => void;
+}) {
   return (
     <button
       onClick={onClick}
@@ -171,7 +200,7 @@ function MessageInput({ onSend }: { onSend: (text: string) => void }) {
 
   return (
     <div className="w-full rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-white/70 dark:bg-zinc-900/70 backdrop-blur p-2 flex items-end gap-2">
-      <button className="p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800" aria-label="Insert emoji" title="Emoji (:)" >
+      <button className="p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800" aria-label="Insert emoji" title="Emoji (:)">
         <Smile className="size-5" />
       </button>
       <textarea
@@ -214,9 +243,7 @@ function ThreadItem({ t, active, onClick }: { t: Thread; active?: boolean; onCli
     <button
       onClick={onClick}
       className={`w-full text-left px-3 py-2 rounded-xl border transition group ${
-        active
-          ? "border-blue-500/50 bg-blue-50/60 dark:bg-blue-500/10"
-          : "border-transparent hover:bg-zinc-100/60 dark:hover:bg-zinc-800/60"
+        active ? "border-blue-500/50 bg-blue-50/60 dark:bg-blue-500/10" : "border-transparent hover:bg-zinc-100/60 dark:hover:bg-zinc-800/60"
       }`}
       aria-current={active ? "true" : undefined}
     >
@@ -225,21 +252,17 @@ function ThreadItem({ t, active, onClick }: { t: Thread; active?: boolean; onCli
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <span className="font-medium truncate">{t.title}</span>
-            {t.pinned && (
-              <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-200/60 text-amber-800">Pinned</span>
-            )}
+            {t.pinned && <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-200/60 text-amber-800">Pinned</span>}
           </div>
           <div className="text-xs text-zinc-500 truncate">{t.lastMessage}</div>
         </div>
-        {t.unread ? (
-          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-blue-600 text-white">{t.unread}</span>
-        ) : null}
+        {t.unread ? <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-blue-600 text-white">{t.unread}</span> : null}
       </div>
     </button>
   );
 }
 
-// Empty state component
+// Empty state
 function EmptyState() {
   return (
     <div className="h-full grid place-items-center text-center p-10">
@@ -277,10 +300,22 @@ function SettingsPanel({ onClose }: { onClose: () => void }) {
         </button>
       </div>
       <div className="space-y-3 text-sm">
-        <div className="flex items-center gap-2"><Bell className="size-4" /><span>Notifications</span></div>
-        <div className="flex items-center gap-2"><Shield className="size-4" /><span>Privacy</span></div>
-        <div className="flex items-center gap-2"><Globe className="size-4" /><span>Language</span></div>
-        <div className="flex items-center gap-2"><Accessibility className="size-4" /><span>Accessibility</span></div>
+        <div className="flex items-center gap-2">
+          <Bell className="size-4" />
+          <span>Notifications</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <Shield className="size-4" />
+          <span>Privacy</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <Globe className="size-4" />
+          <span>Language</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <Accessibility className="size-4" />
+          <span>Accessibility</span>
+        </div>
         <p className="text-xs text-zinc-500">This panel is a visual placeholder for a full settings page.</p>
       </div>
     </motion.div>
@@ -296,7 +331,10 @@ export default function ChatUIUXShowcase() {
   const scrollerRef = useRef<HTMLDivElement>(null);
 
   // Derived: time now
-  const timeNow = useMemo(() => new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }), [messages.length]);
+  const timeNow = useMemo(
+    () => new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    [messages.length]
+  );
 
   // Scroll to bottom on new messages
   useEffect(() => {
@@ -321,14 +359,14 @@ export default function ChatUIUXShowcase() {
 
   async function handleSend(text: string) {
     const id = crypto.randomUUID();
-    const newMsg: Message = { id, sender: "user", text, time: timeNow, status: "sending" };
+    const newMsg: Message = { id, sender: "user", text, time: timeNow, status: "sending" as const };
     setMessages((prev) => [...prev, newMsg]);
 
     // Simulate network + delivery + read
     await wait(400);
-    setMessages((prev) => prev.map((m) => (m.id === id ? { ...m, status: "sent" } : m)));
+    setMessages((prev) => prev.map((m) => (m.id === id ? { ...m, status: "sent" as const } : m)));
     await wait(300);
-    setMessages((prev) => prev.map((m) => (m.id === id ? { ...m, status: "delivered" } : m)));
+    setMessages((prev) => prev.map((m) => (m.id === id ? { ...m, status: "delivered" as const } : m)));
 
     // Bot typing
     setTyping(true);
@@ -348,14 +386,25 @@ export default function ChatUIUXShowcase() {
     setTyping(false);
 
     setMessages((prev) => [
-      ...prev.map((m) => (m.id === id ? { ...m, status: "read" } : m)),
-      { id: crypto.randomUUID(), sender: "bot", text: reply, time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) },
+      ...prev.map((m) => (m.id === id ? { ...m, status: "read" as const } : m)),
+      {
+        id: crypto.randomUUID(),
+        sender: "bot",
+        text: reply,
+        time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      },
     ]);
   }
 
   return (
     <div className={theme === "dark" ? "dark" : ""}>
-      <a href="#chat-main" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 bg-blue-600 text-white px-3 py-2 rounded">Skip to chat</a>
+      <a
+        href="#chat-main"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 bg-blue-600 text-white px-3 py-2 rounded"
+      >
+        Skip to chat
+      </a>
+
       <div className="min-h-screen w-full bg-gradient-to-br from-zinc-50 to-white dark:from-zinc-950 dark:to-zinc-900 text-zinc-900 dark:text-zinc-50 transition-colors">
         {/* App shell */}
         <div className="mx-auto max-w-7xl px-3 md:px-6 py-6 grid grid-cols-12 gap-4">
@@ -401,7 +450,10 @@ export default function ChatUIUXShowcase() {
                     className="w-full pl-9 pr-3 py-2 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-transparent outline-none focus:ring-2 focus:ring-blue-500/60"
                   />
                 </div>
-                <button className="p-2 rounded-xl border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800" aria-label="Filter">
+                <button
+                  className="p-2 rounded-xl border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                  aria-label="Filter"
+                >
                   <Filter className="size-4" />
                 </button>
               </div>
@@ -413,8 +465,12 @@ export default function ChatUIUXShowcase() {
               </div>
 
               <div className="mt-4 grid grid-cols-2 gap-2 text-xs">
-                <div className="px-3 py-2 rounded-xl border border-zinc-200 dark:border-zinc-700 flex items-center gap-2"><Clock className="size-3.5" /> Recent</div>
-                <div className="px-3 py-2 rounded-xl border border-zinc-200 dark:border-zinc-700 flex items-center gap-2"><Keyboard className="size-3.5" /> Shortcuts</div>
+                <div className="px-3 py-2 rounded-xl border border-zinc-200 dark:border-zinc-700 flex items-center gap-2">
+                  <Clock className="size-3.5" /> Recent
+                </div>
+                <div className="px-3 py-2 rounded-xl border border-zinc-200 dark:border-zinc-700 flex items-center gap-2">
+                  <Keyboard className="size-3.5" /> Shortcuts
+                </div>
               </div>
             </div>
           </aside>
@@ -425,28 +481,42 @@ export default function ChatUIUXShowcase() {
               {/* Header */}
               <header className="flex items-center justify-between px-4 md:px-6 py-3 border-b border-zinc-200/70 dark:border-zinc-800/70">
                 <div className="flex items-center gap-2">
-                  <button className="p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800" aria-label="Previous chat"><ChevronLeft className="size-4" /></button>
+                  <button className="p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800" aria-label="Previous chat">
+                    <ChevronLeft className="size-4" />
+                  </button>
                   <div>
                     <div className="font-semibold leading-tight">Portfolio Review</div>
                     <div className="text-xs text-zinc-500">You + Demo Assistant</div>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <IconBtn label="Info"><User className="size-4" /><span className="hidden md:inline text-sm">Profile</span></IconBtn>
-                  <IconBtn label="More"><MoreHorizontal className="size-4" /></IconBtn>
+                  <IconBtn label="Info">
+                    <User className="size-4" />
+                    <span className="hidden md:inline text-sm">Profile</span>
+                  </IconBtn>
+                  <IconBtn label="More">
+                    <MoreHorizontal className="size-4" />
+                  </IconBtn>
                 </div>
               </header>
 
               {/* Scroll area */}
-              <div ref={scrollerRef} className="h-[58vh] md:h-[62vh] overflow-y-auto px-4 md:px-6 py-5 space-y-4 scroll-smooth">
+              <div
+                ref={scrollerRef}
+                className="h-[58vh] md:h-[62vh] overflow-y-auto px-4 md:px-6 py-5 space-y-4 scroll-smooth"
+              >
                 {messages.map((m) => (
                   <Bubble key={m.id} m={m} />
                 ))}
-                <AnimatePresence>{typing && (
-                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex">
-                    <div className="ml-12"><Typing /></div>
-                  </motion.div>
-                )}</AnimatePresence>
+                <AnimatePresence>
+                  {typing && (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex">
+                      <div className="ml-12">
+                        <Typing />
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
                 {!messages.length && <EmptyState />}
               </div>
 
@@ -454,23 +524,55 @@ export default function ChatUIUXShowcase() {
               <div className="border-t border-zinc-200/70 dark:border-zinc-800/70 p-3 md:p-4">
                 <div className="flex items-center justify-between mb-2 text-[11px] text-zinc-500">
                   <div className="flex items-center gap-3">
-                    <span>Press <kbd className="px-1 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800">Enter</kbd> to send</span>
+                    <span>
+                      Press <kbd className="px-1 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800">Enter</kbd> to send
+                    </span>
                     <span className="hidden sm:inline">•</span>
                     <span className="hidden sm:inline">⌘/Ctrl + J to toggle theme</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="hidden md:inline">Status:</span>
-                    <span className="inline-flex items-center gap-1"><Shield className="size-3" />E2EE (demo)</span>
+                    <span className="inline-flex items-center gap-1">
+                      <Shield className="size-3" />
+                      E2EE (demo)
+                    </span>
                   </div>
                 </div>
                 <MessageInput onSend={handleSend} />
                 <div className="flex items-center justify-between mt-2">
                   <div className="flex items-center gap-2 text-xs text-zinc-500">
-                    <button className="px-2 py-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800" title="Clear chat" aria-label="Clear chat" onClick={() => setMessages([])}>
-                      <Trash2 className="size-3.5 inline mr-1" />Clear
+                    <button
+                      className="px-2 py-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                      title="Clear chat"
+                      aria-label="Clear chat"
+                      onClick={() => setMessages([])}
+                    >
+                      <Trash2 className="size-3.5 inline mr-1" />
+                      Clear
                     </button>
-                    <button className="px-2 py-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800" title="Demo attachments" aria-label="Demo attachments" onClick={() => setMessages((prev)=>[...prev, {id:crypto.randomUUID(), sender:"user", text:"Here are the brand assets.", time: new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"}), status:"read", attachments:[{type:"image", name:"logo@2x.png"},{type:"file", name:"brand‑guidelines.pdf"}]}])}>
-                      <Paperclip className="size-3.5 inline mr-1" />Attach
+                    <button
+                      className="px-2 py-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                      title="Demo attachments"
+                      aria-label="Demo attachments"
+                      onClick={() =>
+                        setMessages((prev) => [
+                          ...prev,
+                          {
+                            id: crypto.randomUUID(),
+                            sender: "user",
+                            text: "Here are the brand assets.",
+                            time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+                            status: "read" as const,
+                            attachments: [
+                              { type: "image", name: "logo@2x.png" },
+                              { type: "file", name: "brand-guidelines.pdf" },
+                            ],
+                          },
+                        ])
+                      }
+                    >
+                      <Paperclip className="size-3.5 inline mr-1" />
+                      Attach
                     </button>
                   </div>
                   <div className="text-[11px] text-zinc-500">Demo build • No network calls</div>
